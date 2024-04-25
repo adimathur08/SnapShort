@@ -38,8 +38,6 @@ public class RegisterController
         System.out.println("[User Management][RegisterController] UserDTO + " + userDTO.toString());
         validator.validateUser(userDTO);
 
-        // hash pw
-
         //save
         User user = service.save(userDTO);
 
