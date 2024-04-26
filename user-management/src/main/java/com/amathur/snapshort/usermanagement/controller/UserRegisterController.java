@@ -1,8 +1,7 @@
 package com.amathur.snapshort.usermanagement.controller;
 
-import com.amathur.snapshort.usermanagement.dto.UserLoginRequestDTO;
-import com.amathur.snapshort.usermanagement.dto.dataservice.LoginResponse;
-import com.amathur.snapshort.usermanagement.service.UserLoginService;
+import com.amathur.snapshort.usermanagement.dto.UserDTO;
+import com.amathur.snapshort.usermanagement.service.UserRegisterService;
 import com.amathur.snapshort.usermanagement.validator.UserValidator;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,50 +18,21 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-public class UserLoginController
+public class UserRegisterController
 {
     @Autowired
-    UserLoginService service;
+    UserRegisterService service;
 
     @Autowired
     UserValidator validator;
 
-    @PostMapping("/login")
-    public ResponseEntity loginUser(@RequestBody UserLoginRequestDTO userLoginRequestDTO, BindingResult bindingResult)
+    @PostMapping("/register")
+    public ResponseEntity registerUser(@RequestBody UserDTO userDTO,BindingResult bindingResult)
     {
-        System.out.println("[UserLoginController] Login request for user : " + userLoginRequestDTO.toString());
-        validator.validateLoginUser(userLoginRequestDTO);
-        System.out.println("[UserLoginController] User validated successfully");
-
-        LoginResponse loginResponse = service.loginUser(userLoginRequestDTO);
-        Map<String, Object> response = new HashMap<>();
-        Map<String, Object> errors = new HashMap<>();
-        Map<String, Object> data = new HashMap<>();
-
-        if(loginResponse == null)
-        {
-            errors.put("message", "Unable to login user with username : " + userLoginRequestDTO.getUsername() + ". Please refer logs.");
-            response.put("status", 400);
-            response.put("errors", errors);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-
-        if(loginResponse.getData().getPassword().equals(userLoginRequestDTO.getPassword()))
-        {
-            // generate JWT from username
-            String jwt = "JWT TOKEN";
-            data.put("JWT", jwt);
-            response.put("status", 200);
-            response.put("data", data);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-
-        errors.put("message", "Incorrect password combination for username : " + userLoginRequestDTO.getUsername());
-        response.put("status", 401);
-        response.put("errors", errors);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        System.out.println("[UserRegisterController] Inside register controller with user : " + userDTO.toString());
+        validator.validateRegisterUser(userDTO);
+        return service.save(userDTO);
     }
-
 
     // Exception Handling
 
