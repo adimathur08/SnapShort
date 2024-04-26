@@ -5,6 +5,7 @@ import com.amathur.snapshort.usermanagement.dto.dataservice.RegistrationResponse
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -18,8 +19,8 @@ public class UserRegisterService
     @Autowired
     RestTemplate restTemplate;
 
-    public ResponseEntity<Map<String, Object>> save(UserDTO userDTO) {
-        // generate hash pw and update
+    public ResponseEntity<Map<String, Object>> save(UserDTO userDTO)
+    {
         Map<String, Object> response = new HashMap<>();
         Map<String, Object> errors = new HashMap<>();
         Map<String, Object> data = new HashMap<>();

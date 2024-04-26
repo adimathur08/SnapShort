@@ -24,6 +24,6 @@ public class UserDTO
     // Not needed as would already be validated from User Management service
     @NotBlank(message = "Password cannot be blank")
     @NotNull(message = "Password cannot be null")
-    @Size(min = 5, max = 10, message = "Password should be in the range 5-10")
+    @Size(min = 30, max = 100, message = "Encrypted password should be in the range 30-100")
     String password;
 }

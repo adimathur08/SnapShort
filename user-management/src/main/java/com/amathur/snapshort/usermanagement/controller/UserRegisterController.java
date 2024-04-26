@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +27,15 @@ public class UserRegisterController
     @Autowired
     UserValidator validator;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @PostMapping("/register")
     public ResponseEntity registerUser(@RequestBody UserDTO userDTO,BindingResult bindingResult)
     {
         System.out.println("[UserRegisterController] Inside register controller with user : " + userDTO.toString());
         validator.validateRegisterUser(userDTO);
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         return service.save(userDTO);
     }
 

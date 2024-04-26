@@ -3,6 +3,7 @@ package com.amathur.snapshort.usermanagement.service;
 import com.amathur.snapshort.usermanagement.dto.UserLoginRequestDTO;
 import com.amathur.snapshort.usermanagement.dto.dataservice.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +16,6 @@ public class UserLoginService
 
     public LoginResponse loginUser(UserLoginRequestDTO userLoginRequestDTO)
     {
-        // generate hash pw and update
         try
         {
             LoginResponse databaseAccessResponse = restTemplate.getForEntity(

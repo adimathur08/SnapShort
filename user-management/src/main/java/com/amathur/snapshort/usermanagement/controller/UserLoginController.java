@@ -1,7 +1,9 @@
 package com.amathur.snapshort.usermanagement.controller;
 
+import com.amathur.snapshort.usermanagement.dto.LoggedUserDTO;
 import com.amathur.snapshort.usermanagement.dto.UserLoginRequestDTO;
 import com.amathur.snapshort.usermanagement.dto.dataservice.LoginResponse;
+import com.amathur.snapshort.usermanagement.security.util.JWTService;
 import com.amathur.snapshort.usermanagement.service.UserLoginService;
 import com.amathur.snapshort.usermanagement.validator.UserValidator;
 import jakarta.validation.ConstraintViolationException;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,11 +30,18 @@ public class UserLoginController
     @Autowired
     UserValidator validator;
 
+    @Autowired
+    JWTService jwtService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public ResponseEntity loginUser(@RequestBody UserLoginRequestDTO userLoginRequestDTO, BindingResult bindingResult)
     {
         System.out.println("[UserLoginController] Login request for user : " + userLoginRequestDTO.toString());
         validator.validateLoginUser(userLoginRequestDTO);
+        userLoginRequestDTO.setPassword(passwordEncoder.encode(userLoginRequestDTO.getPassword()));
         System.out.println("[UserLoginController] User validated successfully");
 
         LoginResponse loginResponse = service.loginUser(userLoginRequestDTO);
@@ -46,12 +56,12 @@ public class UserLoginController
             response.put("errors", errors);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-
+        System.out.println("## from REQ : " + userLoginRequestDTO.getPassword());
+        System.out.println("## from DBB : " + loginResponse.getData().getPassword());
         if(loginResponse.getData().getPassword().equals(userLoginRequestDTO.getPassword()))
         {
-            // generate JWT from username
-            String jwt = "JWT TOKEN";
-            data.put("JWT", jwt);
+            String jwt = jwtService.generateToken(new LoggedUserDTO(userLoginRequestDTO.getUsername(), userLoginRequestDTO.getPassword()));
+            data.put("jwt", jwt);
             response.put("status", 200);
             response.put("data", data);
             return ResponseEntity.status(HttpStatus.OK).body(response);
