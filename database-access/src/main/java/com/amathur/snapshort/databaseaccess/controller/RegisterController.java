@@ -1,6 +1,7 @@
 package com.amathur.snapshort.databaseaccess.controller;
 
 import com.amathur.snapshort.databaseaccess.dto.UserDTO;
+import com.amathur.snapshort.databaseaccess.dto.UserRegisterResponse;
 import com.amathur.snapshort.databaseaccess.entity.User;
 import com.amathur.snapshort.databaseaccess.exception.DatabaseExceptionHandler;
 import com.amathur.snapshort.databaseaccess.exception.UsernameNotUniqueException;
@@ -40,11 +41,11 @@ public class RegisterController
 
         //save
         User user = service.save(userDTO);
-
+        UserRegisterResponse responseData = new UserRegisterResponse(user.getId(), user.getUsername());
         // send response
         Map<String, Object> response = new HashMap<>();
         response.put("status", "201"); // Success code for "Created"
-        response.put("data", user); // User object in the data section
+        response.put("data", responseData); // User object in the data section
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

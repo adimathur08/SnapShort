@@ -1,5 +1,6 @@
 package com.amathur.snapshort.databaseaccess.controller;
 
+import com.amathur.snapshort.databaseaccess.dto.UserLoginResponse;
 import com.amathur.snapshort.databaseaccess.entity.User;
 import com.amathur.snapshort.databaseaccess.service.FetchService;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,8 +20,20 @@ public class FetchController
     FetchService service;
 
     // Used to Login User
-    @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> fetchUser(@PathVariable(name = "id") int id)
+    @GetMapping("username/{username}")
+    public ResponseEntity<Map<String, Object>> fetchUserByUsername(@PathVariable(name = "username") String username)
+    {
+        User user = service.fetchByUserName(username);
+        UserLoginResponse responseData = new UserLoginResponse(user.getUsername(), user.getPassword());
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "200");
+        response.put("data", responseData);
+        System.out.println("[FetchController] Fetch by username request : " + user.toString());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("id/{id}")
+    public ResponseEntity<Map<String, Object>> fetchUserById(@PathVariable(name = "id") int id)
     {
         User user = service.fetch(id);
         Map<String, Object> response = new HashMap<>();

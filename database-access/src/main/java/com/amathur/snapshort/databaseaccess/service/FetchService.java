@@ -26,4 +26,12 @@ public class FetchService
             throw new EntityNotFoundException("User with ID " + id + " not present.");
         }
     }
+
+    public User fetchByUserName(String username)
+    {
+        User user =  repository.findByUsername(username);
+        if (user != null)
+            return user;
+        throw new EntityNotFoundException("User with username " + username + " not present.");
+    }
 }
