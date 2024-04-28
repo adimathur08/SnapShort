@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user/fetch")
+@RequestMapping("/internal/user/fetch")
 public class FetchController
 {
     @Autowired
