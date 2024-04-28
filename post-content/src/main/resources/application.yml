@@ -4,3 +4,7 @@ server:
 spring:
   application:
     name: Post Content
+  data:
+    mongodb:
+      uri: mongodb+srv://adimathur08:aditya12345@snapshortpostcluster.rc52cfb.mongodb.net/?retryWrites=true&w=majority&appName=SnapShortPostCluster
+      database: Posts
