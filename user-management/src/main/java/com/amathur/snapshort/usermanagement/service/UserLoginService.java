@@ -20,7 +20,6 @@ public class UserLoginService implements UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
-        System.out.println("[UserLoginService] Trying to login user, fetching details from DB.");
         try
         {
             LoginResponse databaseAccessResponse = restTemplate.getForEntity(
@@ -32,7 +31,6 @@ public class UserLoginService implements UserDetailsService
                 System.err.println("[LoginResponse] Response from Database Access Service is null");
                 return null;
             }
-            System.out.println("[LoginResponse] Response from Database Access service : " + databaseAccessResponse.toString());
             return new LoggedUserDTO(databaseAccessResponse.getData().getUsername(), databaseAccessResponse.getData().getPassword());
         }
         catch (HttpClientErrorException ex)
