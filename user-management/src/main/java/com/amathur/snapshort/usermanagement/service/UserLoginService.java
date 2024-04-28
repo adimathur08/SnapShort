@@ -1,25 +1,30 @@
 package com.amathur.snapshort.usermanagement.service;
 
-import com.amathur.snapshort.usermanagement.dto.UserLoginRequestDTO;
+import com.amathur.snapshort.usermanagement.dto.LoggedUserDTO;
 import com.amathur.snapshort.usermanagement.dto.dataservice.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class UserLoginService
+public class UserLoginService implements UserDetailsService
 {
+    private static final String USER_FETCH_URL = "http://localhost:8080/user/fetch/username/";
     @Autowired
     RestTemplate restTemplate;
 
-    public LoginResponse loginUser(UserLoginRequestDTO userLoginRequestDTO)
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
+        System.out.println("[UserLoginService] Trying to login user, fetching details from DB.");
         try
         {
             LoginResponse databaseAccessResponse = restTemplate.getForEntity(
-                    "http://localhost:8080/user/fetch/username/" + userLoginRequestDTO.getUsername(),
+                    USER_FETCH_URL + username,
                     LoginResponse.class).getBody();
 
             if (databaseAccessResponse == null)
@@ -28,7 +33,7 @@ public class UserLoginService
                 return null;
             }
             System.out.println("[LoginResponse] Response from Database Access service : " + databaseAccessResponse.toString());
-            return databaseAccessResponse;
+            return new LoggedUserDTO(databaseAccessResponse.getData().getUsername(), databaseAccessResponse.getData().getPassword());
         }
         catch (HttpClientErrorException ex)
         {

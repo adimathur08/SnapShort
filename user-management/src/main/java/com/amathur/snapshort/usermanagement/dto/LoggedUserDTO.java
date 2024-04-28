@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-// Used just for JWT Tokens
+// Used for Authentication and to create JWT Tokens by Spring Security, i.e. by implementing UserDetails
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -2,7 +2,6 @@ package com.amathur.snapshort.usermanagement.controller;
 
 import com.amathur.snapshort.usermanagement.dto.LoggedUserDTO;
 import com.amathur.snapshort.usermanagement.dto.UserLoginRequestDTO;
-import com.amathur.snapshort.usermanagement.dto.dataservice.LoginResponse;
 import com.amathur.snapshort.usermanagement.security.util.JWTService;
 import com.amathur.snapshort.usermanagement.service.UserLoginService;
 import com.amathur.snapshort.usermanagement.validator.UserValidator;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,36 +41,38 @@ public class UserLoginController
     {
         System.out.println("[UserLoginController] Login request for user : " + userLoginRequestDTO.toString());
         validator.validateLoginUser(userLoginRequestDTO);
-        userLoginRequestDTO.setPassword(passwordEncoder.encode(userLoginRequestDTO.getPassword()));
-        System.out.println("[UserLoginController] User validated successfully");
+        System.out.println("[UserLoginController] User data validated successfully, Trying to log in user");
 
-        LoginResponse loginResponse = service.loginUser(userLoginRequestDTO);
         Map<String, Object> response = new HashMap<>();
-        Map<String, Object> errors = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
+        Map<String, Object> error = new HashMap<>();
+        try
+        {
+            LoggedUserDTO loggedUser = (LoggedUserDTO) service.loadUserByUsername(userLoginRequestDTO.getUsername());
 
-        if(loginResponse == null)
-        {
-            errors.put("message", "Unable to login user with username : " + userLoginRequestDTO.getUsername() + ". Please refer logs.");
-            response.put("status", 400);
-            response.put("errors", errors);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        System.out.println("## from REQ : " + userLoginRequestDTO.getPassword());
-        System.out.println("## from DBB : " + loginResponse.getData().getPassword());
-        if(loginResponse.getData().getPassword().equals(userLoginRequestDTO.getPassword()))
-        {
-            String jwt = jwtService.generateToken(new LoggedUserDTO(userLoginRequestDTO.getUsername(), userLoginRequestDTO.getPassword()));
+            // Validating password here
+            if (!passwordEncoder.matches(userLoginRequestDTO.getPassword(), loggedUser.getPassword()))
+            {
+                System.err.println("[UserLoginController] Password validation failed");
+                throw new UsernameNotFoundException("Invalid username or password");
+            }
+
+            System.out.println("[UserLoginController] Password validation success");
+            String jwt = jwtService.generateToken(loggedUser);
             data.put("jwt", jwt);
             response.put("status", 200);
             response.put("data", data);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
-
-        errors.put("message", "Incorrect password combination for username : " + userLoginRequestDTO.getUsername());
-        response.put("status", 401);
-        response.put("errors", errors);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        catch (Exception e)
+        {
+            // Generic error message for both UsernameNotFoundException and other exceptions
+            System.out.println("[UserLoginController] Exception while trying to log in username " + userLoginRequestDTO.getUsername() + ". Exception: " + e.getMessage());
+            error.put("message", "Invalid Login Credentials for username " + userLoginRequestDTO.getUsername());
+            response.put("status", 401);
+            response.put("errors", error);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 
 
