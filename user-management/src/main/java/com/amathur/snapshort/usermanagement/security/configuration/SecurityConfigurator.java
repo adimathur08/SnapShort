@@ -24,7 +24,7 @@ public class SecurityConfigurator
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((req)->
-                        req.requestMatchers("/user/register", "/user/login", "user/fetch/username/*")
+                        req.requestMatchers("/user/auth/*")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

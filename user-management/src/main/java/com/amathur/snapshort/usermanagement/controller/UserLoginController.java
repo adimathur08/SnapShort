@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/user/auth")
 public class UserLoginController
 {
     @Autowired
@@ -64,10 +64,12 @@ public class UserLoginController
             response.put("data", data);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
+        // catch for DB connection issues like I/O
+        // Log [UserLoginController] Exception while trying to log in username aditya1. Exception: I/O error on GET request for "http://localhost:8080/internal/user/fetch/username/aditya1": Connection refused: connect
         catch (Exception e)
         {
             // Generic error message for both UsernameNotFoundException and other exceptions
-            System.out.println("[UserLoginController] Exception while trying to log in username " + userLoginRequestDTO.getUsername() + ". Exception: " + e.getMessage());
+            System.err.println("[UserLoginController] Exception while trying to log in username " + userLoginRequestDTO.getUsername() + ". Exception: " + e.getMessage());
             error.put("message", "Invalid Login Credentials for username " + userLoginRequestDTO.getUsername());
             response.put("status", 401);
             response.put("errors", error);

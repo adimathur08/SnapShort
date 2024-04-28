@@ -15,6 +15,7 @@ import java.util.Map;
 @Service
 public class UserRegisterService
 {
+    private static final String USER_REGISTER_URL = "http://localhost:8080/internal/user/register";
     @Autowired
     RestTemplate restTemplate;
 
@@ -26,7 +27,7 @@ public class UserRegisterService
         try
         {
             RegistrationResponse databaseAccessResponse = restTemplate.postForEntity(
-                    "http://localhost:8080/user/register",
+                    USER_REGISTER_URL,
                     userDTO, RegistrationResponse.class).getBody();
 
             if (databaseAccessResponse == null)

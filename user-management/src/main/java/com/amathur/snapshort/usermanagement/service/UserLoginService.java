@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class UserLoginService implements UserDetailsService
 {
-    private static final String USER_FETCH_URL = "http://localhost:8080/user/fetch/username/";
+    private static final String USER_FETCH_URL = "http://localhost:8080/internal/user/fetch/username/";
     @Autowired
     RestTemplate restTemplate;
 
