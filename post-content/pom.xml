@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.amathur.snapshort</groupId>
 	<artifactId>post-content</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Post Content</name>
 	<description>Spring Boot Service to Post Content</description>
 	<properties>
@@ -101,6 +101,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>post-content</finalName>
 	</build>
 
 </project>

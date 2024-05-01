@@ -84,6 +84,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>database-access</finalName>
 	</build>
 
 </project>
