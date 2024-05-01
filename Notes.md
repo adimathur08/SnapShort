@@ -1,6 +1,0 @@
-## PgAdmin
-
-Password : password
-
-
-    
