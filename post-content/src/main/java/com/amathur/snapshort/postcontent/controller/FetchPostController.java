@@ -29,7 +29,6 @@ public class FetchPostController
         String jwtUsername = jwtUtil.extractUsername(requestHeader);
         System.out.println("[FetchPostController] Trying to get posts by author : " + username + ". Request Access by : " + jwtUsername);
         List<Post> posts = service.findAllByAuthorId(username);
-        System.out.println("POSTS : " + posts.size());
         Map<String, Object> response = new HashMap<>();
         response.put("status", 200);
         response.put("data", posts);
