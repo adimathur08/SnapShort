@@ -36,8 +36,8 @@ public class FetchPostController
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // Exception Handling
 
+    // Exception Handling
 
     @ExceptionHandler(NoResourceFoundException.class)
     private ResponseEntity<Map<String, Object>> handleEntityNotFoundException(NoResourceFoundException exception)
@@ -53,5 +53,4 @@ public class FetchPostController
         response.put("errors", errorDetails);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
-
 }

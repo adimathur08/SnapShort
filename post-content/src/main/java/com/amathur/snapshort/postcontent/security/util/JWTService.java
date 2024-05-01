@@ -12,9 +12,7 @@ import java.util.function.Function;
 @Service
 public class JWTService
 {
-
     private final String SECRET = "sa12dkre32ndue8ny8yx2m82cn8x6m8z12x18n1m8x1i9uf0hze19xu9r1xmu1empld2341ric231x1nc3p1x1c1g";
-
 
     private Key getSigningKey()
     {
@@ -31,11 +29,18 @@ public class JWTService
                 .getBody();
     }
 
-    public String extractUsername(String token) {
+    public String extractUsername(String token)
+    {
         return extractClaim(token, Claims::getSubject);
     }
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver)
+    {
         final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        if (claims != null)
+        {
+            return claimsResolver.apply(claims);
+        }
+        return null;
     }
 }

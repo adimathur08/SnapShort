@@ -1,12 +1,9 @@
 package com.amathur.snapshort.postcontent.exception;
 
-public class JWTUnauthorizedAccessException extends RuntimeException
-{
-    public JWTUnauthorizedAccessException()
-    {
-        super();
-    }
+import io.jsonwebtoken.JwtException;
 
+public class JWTUnauthorizedAccessException extends JwtException
+{
     public JWTUnauthorizedAccessException(String message)
     {
         super(message);
